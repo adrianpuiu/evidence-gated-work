@@ -8,7 +8,14 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 skill_dir="$(cd "$skill_dir" && pwd)"
 name="$(basename "$skill_dir")"
 
-python -m venv "$root/.venv" >/dev/null 2>&1 || true
+if [ ! -x "$root/.venv/bin/python" ]; then
+  if command -v uv >/dev/null 2>&1; then
+    uv venv "$root/.venv" >/dev/null
+  else
+    python3 -m venv "$root/.venv"
+  fi
+fi
+
 if command -v uv >/dev/null 2>&1; then
   uv pip install --python "$root/.venv/bin/python" --quiet pyyaml
 else
